@@ -5,7 +5,7 @@ ENV ASPNETCORE_URLS http://+:80
 ENV ASPNETCORE_PKG_VERSION 2.0.6
 
 # set up node
-ENV NODE_VERSION 6.13.0
+ENV NODE_VERSION 8.10.0
 ENV NODE_DOWNLOAD_SHA 467472d9adafd067588f2a20f9edcd7493d973fe107502c55d6fabfa0d3f91af
 ENV NODE_DOWNLOAD_URL https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz
 
@@ -16,7 +16,10 @@ RUN curl -SL "$NODE_DOWNLOAD_URL" --output nodejs.tar.gz \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
     # set up bower and gulp
     && npm install -g bower gulp \
-    && echo '{ "allow_root": true }' > /root/.bowerrc
+    && echo '{ "allow_root": true }' > /root/.bowerrc \
+    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
+    && apt-get update && apt-get install yarn
 
 # warmup NuGet package cache
 COPY packagescache.csproj /tmp/warmup/
